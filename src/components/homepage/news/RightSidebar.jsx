@@ -6,6 +6,7 @@ import bg from "@/assets/bg.png";
 import React from 'react';
 import { FaFacebook, FaGithub, FaGoogle, FaInstagram, FaTwitter } from 'react-icons/fa';
 
+
 const RightSidebar = () => {
     return (
         <div>
