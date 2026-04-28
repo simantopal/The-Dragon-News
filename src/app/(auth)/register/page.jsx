@@ -1,18 +1,35 @@
 'use client'
+import { authClient } from '@/lib/auth-client';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 const RegisterPage = () => {
     const {
-        register, 
-        handleSubmit, 
-        formState: {errors}} = useForm()
+        register,
+        handleSubmit,
+        formState: { errors } } = useForm()
 
 
-    const handleRegisterFunc = (data) => {
+    const handleRegisterFunc = async (data) => {
         console.log(data, "data")
-        const {email, name, photo, password} = data;
+        const { email, name, photo, password } = data;
         console.log(name, photo);
+
+
+        const {data: res, error} = await authClient.signUp.email({
+            name: name, // required
+            email: email, // required
+            password: password, // required
+            image: photo,
+            callbackURL: "/",
+        });
+        console.log(res, error);
+        if(error){
+            alert(error.message)
+        }
+        if(res){
+            alert("SignUp successful");
+        }
     };
 
 
@@ -26,36 +43,40 @@ const RegisterPage = () => {
                         <fieldset className="fieldset">
 
                             <h2 className='font-semibold text-xl pt-10 border-t mb-1'>Your Name</h2>
-                            <input 
+                            <input
                                 type="name"
                                 className="input w-full"
                                 placeholder="Enter your name"
                                 {...register("name", { required: "Name field is required" })} />
-                                {errors.name && <p className='text-red-500'>{errors.name.message}</p>}
+                            {errors.name && <p className='text-red-500'>{errors.name.message}</p>}
+                        </fieldset>
 
+                        <fieldset className="fieldset">
                             <h2 className='font-semibold text-xl mb-1 mt-4'>Photo URL</h2>
-                            <input 
+                            <input
                                 type="text"
                                 className="input w-full"
                                 placeholder="Enter your photo url"
                                 {...register("photo", { required: "Photo url field is required" })} />
-                                {errors.photo && <p className='text-red-500'>{errors.photo.message}</p>}
-
+                            {errors.photo && <p className='text-red-500'>{errors.photo.message}</p>}
+                        </fieldset>
+                        <fieldset className="fieldset">
                             <h2 className='font-semibold text-xl mb-1 mt-4'>Email address</h2>
-                            <input 
+                            <input
                                 type="email"
                                 className="input w-full"
                                 placeholder="Enter your email address"
                                 {...register("email", { required: "E-mail field is required" })} />
-                                {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
-
+                            {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
+                        </fieldset>
+                        <fieldset className="fieldset">
                             <h2 className='font-semibold text-xl mb-1 mt-4'>Password</h2>
-                            <input 
-                                type="password" 
+                            <input
+                                type="password"
                                 className="input w-full"
                                 placeholder="Enter your password"
                                 {...register("password", { required: "Password field is required" })} />
-                                {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
+                            {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
 
                         </fieldset>
 

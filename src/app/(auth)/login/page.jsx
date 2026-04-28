@@ -1,21 +1,31 @@
 'use client'
+import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { FaEye } from 'react-icons/fa';
+import { FaEyeSlash } from 'react-icons/fa6';
 
 const LoginPage = () => {
     const {
-        register, 
-        handleSubmit, 
-        formState: {errors}} = useForm()
+        register,
+        handleSubmit,
+        formState: { errors } } = useForm()
+
+    const [isShowPassword, setIsShowPassword] = useState(false);
 
 
-    const handleLoginFunc = (data) => {
+    const handleLoginFunc = async (data) => {
         console.log(data, "data")
+
+        const { data: res, error } = await authClient.signIn.email({
+            email: data.email, // required
+            password: data.password, // required
+            rememberMe: true,
+            callbackURL: "/",
+        });
+        console.log(res, error);
     };
-
-    console.log(errors, "errors");
-
 
     return (
         <div className='container mx-auto min-h-175 flex justify-center items-center'>
@@ -27,29 +37,38 @@ const LoginPage = () => {
                         <fieldset className="fieldset">
 
                             <h2 className='font-semibold text-xl pt-10 border-t mb-1'>Email address</h2>
-                            <input 
+                            <input
                                 type="email"
                                 className="input w-full"
                                 placeholder="Enter your email address"
                                 {...register("email", { required: "E-mail field is required" })} />
-                                {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
 
+                            {errors.email && (
+                                <p className='text-red-500'>{errors.email.message}</p>
+                            )}
+                        </fieldset>
+                        <fieldset className="fieldset relative">
                             <h2 className='font-semibold text-xl mb-1 mt-4'>Password</h2>
-                            <input 
-                                type="password" 
+                            <input
+                                type={isShowPassword ? "text" : "password"}
                                 className="input w-full"
                                 placeholder="Enter your password"
                                 {...register("password", { required: "Password field is required" })} />
-                                {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
+
+                            {/* <span className='absolute right-2 top-17 text-lg cursor-pointer' onClick={() => setIsShowPassword(!isShowPassword)}>
+                                {isShowPassword ? <FaEye /> : <FaEyeSlash />}
+                            </span> */}
+
+                            {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
 
                         </fieldset>
 
                         <button className='btn bg-gray-800 text-white w-full mt-4'>Login</button>
                     </form>
 
-                    <p className='mt-6'>Dont’t Have An Account ? 
-                        <Link 
-                            href={'/register'} className='text-red-400'>Register</Link>
+                    <p className='mt-6'>Dont’t Have An Account ?
+                        <Link
+                            href={'/register'} className='text-red-400'> Register</Link>
                     </p>
 
                 </div>
